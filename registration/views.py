@@ -4,6 +4,8 @@ import pymongo
 from bson import ObjectId
 from pymongo import MongoClient
 import bcrypt
+import requests
+import pprint
 
 
 
@@ -45,22 +47,8 @@ def validateForm(request):
                    "repeatPasswordInput":repeatPasswordFormObject})
 
 
-def connectWithDatabaseAndReturnCollection():
-    cluster = MongoClient(
-        "mongodb://mainuser:test@cluster-shard-00-00-0gtou.mongodb.net:27017,"
-        "cluster-shard-00-01-0gtou.mongodb.net:27017,"
-        "cluster-shard-00-02-0gtou.mongodb.net:27017/python?ssl=true&replicaSet=cluster-shard-0&authSource=admin"
-        "&retryWrites=true&w=majority")
-
-    database = cluster["python"]
-    collection = database["posts"]
-
-    return collection
-
-
 def checkIfUsernameExists(username):
 
-    collection = connectWithDatabaseAndReturnCollection()
 
     listOfJsonObjectsInCollection = getListOfJsonObjects()
 
@@ -73,20 +61,23 @@ def checkIfUsernameExists(username):
 
 
 def getListOfJsonObjects():
-    collection = connectWithDatabaseAndReturnCollection()
-    return list(collection.find())
+    request = requests.get('https://pythonapi.netlify.app/.netlify/functions/api')
+    print(request.json())
+
+    return request.json()
 
 
 
 
 def insertUserIntoDatabase(username,password):
-    collection = connectWithDatabaseAndReturnCollection()
 
     byteStringPassword = password.encode("utf-8")
 
     hashedPassword = bcrypt.hashpw(byteStringPassword,bcrypt.gensalt())
 
-    collection.insert_one({"username":username,"password":hashedPassword})
+    json = {"username":username,"password":hashedPassword}
+
+    request = requests.post('https://pythonapi.netlify.app/.netlify/functions/api',data=json)
 
 
 def showLogin(request):
@@ -119,7 +110,7 @@ def validateLoginData(username,password):
     byteStringPassword = password.encode("utf-8")
 
     for element in listOfJsonObjectsInCollection:
-        if(element["username"]==username and bcrypt.checkpw(byteStringPassword,element["password"])):
+        if(element["username"]==username and bcrypt.checkpw(byteStringPassword,element["password"].encode("utf-8"))):
             return True
 
     return False
