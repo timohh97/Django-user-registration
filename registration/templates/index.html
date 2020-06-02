@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User registration</title>
+    <style>
+        body
+        {
+
+             background-color:cornflowerblue;
+        }
+
+        div
+        {
+            display:table;
+            margin: 0 auto;
+            width:400px;
+            background-color:white;
+            text-align:center;
+            margin-top:100px;
+            height:350px;
+            border-radius:30px;
+        }
+
+        a
+        {
+            text-decoration: none;
+            color:orange;
+            font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+        }
+
+        #button
+        {
+          font-size:x-large;
+          color:white;
+          background-color:darkred;
+        }
+
+        h1
+        {
+            color:orange;
+            font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+        }
+
+    </style>
+</head>
+<body>
+<div>
+<h1>Create a new account</h1>
+<form action="" method="post">
+    {% csrf_token %}
+    {{ usernameInput }}
+    <br><br>
+     {% csrf_token %}
+    {{ passwordInput }}
+    <br><br>
+     {% csrf_token %}
+    {{ repeatPasswordInput }}
+    <br><br>
+    <input id="button" type="submit" value="Create account">
+    <br><br>
+    <a href="{% url 'login' %}">I already have an account (Login)</a>
+</form>
+</div>
+</body>
+</html>

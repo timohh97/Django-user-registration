@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+     body
+        {
+
+             background-color:cornflowerblue;
+        }
+
+        div
+        {
+            display:table;
+            margin: 0 auto;
+            width:400px;
+            background-color:white;
+            text-align:center;
+            margin-top:100px;
+            height:300px;
+            border-radius:30px;
+        }
+
+        a
+        {
+            text-decoration: none;
+            color:orange;
+            font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+        }
+
+        #button
+        {
+          font-size:x-large;
+          color:white;
+          background-color:darkred;
+        }
+
+        h1
+        {
+            color:orange;
+            font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+        }
+
+    </style>
+</head>
+<body style="text-align:center">
+<div>
+<h1>Login</h1>
+<form action="" method="post">
+     {% csrf_token %}
+    {{ usernameInput }}
+    <br><br>
+     {% csrf_token %}
+    {{ passwordInput }}
+    <br><br>
+    <input id="button" type="submit" value="Log in">
+    <br>
+    <br>
+    <a href="{% url 'index' %}">Create a new account</a>
+</form>
+</div>
+</body>
+</html>
