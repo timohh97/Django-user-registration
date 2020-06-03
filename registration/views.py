@@ -1,11 +1,6 @@
 from django.shortcuts import render
 from .forms import *
-import pymongo
-from bson import ObjectId
-from pymongo import MongoClient
-import bcrypt
-import requests
-import pprint
+from .models import User
 
 
 
@@ -49,35 +44,23 @@ def validateForm(request):
 
 def checkIfUsernameExists(username):
 
-
-    listOfJsonObjectsInCollection = getListOfJsonObjects()
-
-    for element in listOfJsonObjectsInCollection:
-        if(element["username"]==username):
+    if(User.objects.filter(username=username)):
             return True
 
     return False
 
+def getJsonObjectsInDatabase():
 
-
-def getListOfJsonObjects():
-    request = requests.get('https://pythonapi.netlify.app/.netlify/functions/api')
-    print(request.json())
-
-    return request.json()
-
-
+    print(list(User.objects.values()))
+    return list(User.objects.values())
 
 
 def insertUserIntoDatabase(username,password):
 
-    byteStringPassword = password.encode("utf-8")
+    newuser = User(username=username,password=password)
 
-    hashedPassword = bcrypt.hashpw(byteStringPassword,bcrypt.gensalt())
+    newuser.save()
 
-    json = {"username":username,"password":hashedPassword}
-
-    request = requests.post('https://pythonapi.netlify.app/.netlify/functions/api',data=json)
 
 
 def showLogin(request):
@@ -105,16 +88,22 @@ def showLogin(request):
 
 
 def validateLoginData(username,password):
-    listOfJsonObjectsInCollection=getListOfJsonObjects()
 
-    byteStringPassword = password.encode("utf-8")
+    jsonObjects = getJsonObjectsInDatabase()
 
-    for element in listOfJsonObjectsInCollection:
-        if(element["username"]==username and bcrypt.checkpw(byteStringPassword,element["password"].encode("utf-8"))):
+    for element in jsonObjects:
+      if element["username"]==username and element["password"]==password:
             return True
 
     return False
 
+
+def resetDatabase(request):
+    users = User.objects.all()
+
+    users.delete()
+
+    return render(request, "reset.html")
 
 
 
